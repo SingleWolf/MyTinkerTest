@@ -1,0 +1,20 @@
+ext {
+    //android
+    androidGradleVersion = '3.0.1'
+    androidSupportVersion = '26.1.0'
+    androidConstraintLayoutVerson = '1.0.2'
+    compileSdkVersion = 26
+
+    defaultConfig = [
+            applicationId : "com.walker.mytinkertest",
+            minSdkVersion : 16,
+            targetSdkVersion : 26,
+            versionCode : 1,
+            versionName : "1.0"
+    ]
+
+    //tinker
+    tinkerVersion='1.9.5'
+    tinkerEnabled = true  //是否启用Tinker的标志位
+    tinkerDateFlag ='0408-08-50-20'//旧apk相关文件的日期标记
+}

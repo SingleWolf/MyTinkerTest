@@ -1,0 +1,92 @@
+apply plugin: 'com.android.application'
+
+def javaVersion = JavaVersion.VERSION_1_7
+
+android {
+    signingConfigs {
+        dripSign {
+            keyAlias 'drip'
+            keyPassword 'hutu1234'
+            storeFile file('C:/Users/Administrator/Desktop/drip.jks')
+            storePassword 'hutu1234'
+        }
+    }
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId rootProject.ext.defaultConfig.applicationId
+        minSdkVersion rootProject.ext.defaultConfig.minSdkVersion
+        targetSdkVersion rootProject.ext.defaultConfig.targetSdkVersion
+        versionCode rootProject.ext.defaultConfig.versionCode
+        versionName rootProject.ext.defaultConfig.versionName
+        multiDexEnabled true
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.dripSign
+        manifestPlaceholders = [UMENG_CHANNEL_VALUE: "drip"]
+        //设置维度就是该版本号，这样维度就是都是统一的了
+        flavorDimensions "versionCode"
+    }
+    //排除目录下不需要编译的包
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+    //java版本
+    compileOptions {
+        sourceCompatibility javaVersion
+        targetCompatibility javaVersion
+    }
+    //建议 recommend Tinker相关配置
+    dexOptions {
+        //启动矩形模式
+        jumboMode = true
+    }
+
+    aaptOptions {
+        cruncherEnabled = false
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.dripSign
+        }
+        debug {
+            signingConfig signingConfigs.dripSign
+        }
+    }
+
+    productFlavors {
+        drip {}
+        yingyongbao {}
+        huawei {}
+        xiaomi {}
+    }
+
+    productFlavors.all { flavor ->
+        flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.androidSupportVersion}"
+    implementation "com.android.support.constraint:constraint-layout:${rootProject.ext.androidConstraintLayoutVerson}"
+    implementation "com.android.support:design:${rootProject.ext.androidSupportVersion}"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    //注解库 用于生成application类 provided编译不打包
+    compileOnly("com.tencent.tinker:tinker-android-anno:${tinkerVersion}") { changing = true }
+    //是否将依赖关系标记为正在改变
+    //tinker的核心库 compile编译并打包
+    implementation("com.tencent.tinker:tinker-android-lib:${tinkerVersion}") { changing = true }
+    annotationProcessor("com.tencent.tinker:tinker-android-anno:${tinkerVersion}") {
+        changing = true
+    }
+    //分包
+    implementation 'com.android.support:multidex:1.0.1'
+}
+
+apply from: "tinker.gradle"

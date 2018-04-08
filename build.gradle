@@ -1,0 +1,29 @@
+apply from: "config.gradle"
+
+buildscript {
+    
+    repositories {
+        mavenLocal()
+        google()
+        jcenter()
+    }
+    dependencies {
+        // root下build.gradle使用
+        apply from: "config.gradle"
+        classpath "com.android.tools.build:gradle:${androidGradleVersion}"
+        //加入Tinker的插件 里面包含gradle脚本
+        classpath "com.tencent.tinker:tinker-patch-gradle-plugin:${tinkerVersion}"
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        google()
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
